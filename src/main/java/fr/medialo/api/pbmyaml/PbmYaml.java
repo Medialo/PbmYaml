@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -252,5 +254,13 @@ public class PbmYaml {
 
     }
 
+
+    public void setValues(Map<String, Object> values) {
+        this.values = values;
+    }
+
+    public void addValues(String url, Map<String, Object> values){
+        values.forEach((s, o) -> this.values.put(url+s,o));
+    }
 
 }
