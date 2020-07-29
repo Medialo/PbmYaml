@@ -207,9 +207,17 @@ public class PbmYaml {
 
 
     public void set(String url,Object value){
-        this.values.replace(url,value);
+            this.values.replace(url,value);
     }
 
+    //Not tested yet
+    public void setOrAdd(String url,Object value){
+        this.values.put(url,value);
+    }
+
+    public void remove(String url){
+        this.values.remove(url);
+    }
 
     public boolean getBoolean(String url){
         return this.values.get(url) != null && (boolean) this.values.get(url);
