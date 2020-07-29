@@ -19,6 +19,8 @@ public class PbmYaml {
     private final Yaml yaml;
     private Map<String,Object> values;
     private File file;
+    private List<String> footer;
+    private List<String> header;
 
     public PbmYaml() {
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -32,7 +34,7 @@ public class PbmYaml {
         try {
             buf = new BufferedInputStream(new FileInputStream(file));
             Object data = this.yaml.load(buf);
-            values = (Map) data;
+            this.values = (Map) data;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -46,6 +48,48 @@ public class PbmYaml {
         }
     }
 
+
+    public void clearFooter(){
+        this.footer.clear();
+    }
+
+    public void setFooter(List<String> list){
+        list.forEach(s -> s = commentCheck(s));
+        this.footer = list;
+    }
+
+    public void addFooter(String... str){
+        if (this.footer == null)
+            this.footer = new ArrayList<>();
+        this.footer.addAll(Arrays.asList(str));
+    }
+
+    public void addFooter(String str){
+        if (this.footer == null)
+            this.footer = new ArrayList<>();
+        this.footer.add(str);
+    }
+
+
+    public void clearHeader(){
+        this.header.clear();
+    }
+
+    public void setheader(List<String> list){
+        this.header = list;
+    }
+
+    public void addHeader(String... str){
+        if (this.header == null)
+            this.header = new ArrayList<>();
+        this.header.addAll(Arrays.asList(str));
+    }
+
+    public void addHeader(String str){
+        if (this.header == null)
+            this.header = new ArrayList<>();
+        this.header.add(str);
+    }
 
     public void createFileAndParents(File file){
         createFileAndParents(file.toPath(),file.getName());
@@ -65,12 +109,16 @@ public class PbmYaml {
                 Files.createDirectories(path);
             if(!Files.exists(path.resolve(fileName)))
                 Files.createFile(path.resolve(fileName));
-//            Files.createFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void reload(){
+        load(this.file);
+    }
+
+    //Idea in progress ...
 //    public boolean validate(){
 //        FileInputStream fi = null;
 //        InputStream stream = null;
@@ -139,7 +187,16 @@ public class PbmYaml {
             e.printStackTrace();
         }
 
+
         if (lineToWrite != null) {
+            if(this.header != null){
+                this.header.replaceAll(this::commentCheck);
+                lineToWrite.addAll(0,this.header);
+            }
+            if(this.footer != null){
+                this.footer.replaceAll(this::commentCheck);
+                lineToWrite.addAll(this.footer);
+            }
             try {
                 Files.write(file.toPath(), lineToWrite, Charset.defaultCharset());
             } catch (IOException e) {
@@ -204,6 +261,11 @@ public class PbmYaml {
 
     public <T> T getOrDefault(String url, T object){
         return this.values.get(url) == null ? object : (T) this.values.get(url);
+    }
+
+    private String commentCheck(String str){
+        return (!str.startsWith("#")) ? "#"+str : str;
+
     }
 
 
