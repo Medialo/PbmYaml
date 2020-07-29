@@ -26,14 +26,16 @@ A small class that provides an easy way to save data and keep comments in Yaml f
 Maven:
 
 ```XML
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
+<repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+</repository>
 ```
 
 ```XML
-            <groupId>com.github.Medialo</groupId>
-            <artifactId>PbmYaml</artifactId>
-            <version>VERSION</version>
+<dependency>
+        <groupId>com.github.Medialo</groupId>
+        <artifactId>PbmYaml</artifactId>
+        <version>VERSION</version>
+</dependency>
 ```
