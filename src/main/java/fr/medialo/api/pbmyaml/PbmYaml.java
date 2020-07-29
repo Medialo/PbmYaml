@@ -30,31 +30,18 @@ public class PbmYaml {
 
     public void load(File file){
         this.file=file;
-        BufferedInputStream buf = null;
-        try {
-            buf = new BufferedInputStream(new FileInputStream(file));
-            Object data = this.yaml.load(buf);
-            this.values = (Map) data;
-        } catch (FileNotFoundException e) {
+        try ( BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file))){
+            this.values = this.yaml.load(buf);
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (buf != null) {
-                try {
-                    buf.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
-
 
     public void clearFooter(){
         this.footer.clear();
     }
 
     public void setFooter(List<String> list){
-        list.forEach(s -> s = commentCheck(s));
         this.footer = list;
     }
 
@@ -62,12 +49,6 @@ public class PbmYaml {
         if (this.footer == null)
             this.footer = new ArrayList<>();
         this.footer.addAll(Arrays.asList(str));
-    }
-
-    public void addFooter(String str){
-        if (this.footer == null)
-            this.footer = new ArrayList<>();
-        this.footer.add(str);
     }
 
 
@@ -85,11 +66,6 @@ public class PbmYaml {
         this.header.addAll(Arrays.asList(str));
     }
 
-    public void addHeader(String str){
-        if (this.header == null)
-            this.header = new ArrayList<>();
-        this.header.add(str);
-    }
 
     public void createFileAndParents(File file){
         createFileAndParents(file.toPath(),file.getName());
