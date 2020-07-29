@@ -39,3 +39,13 @@ Maven:
         <version>VERSION</version>
 </dependency>
 ```
+
+## Example 
+
+```JAVA
+        File filetest = new File(this.getDataFolder(),"test.yml");
+        PbmYaml fileConfiguration = new PbmYaml();
+        fileConfiguration.load(filetest);
+        fileConfiguration.set("parameter.value",false);
+        fileConfiguration.save();
+```  
