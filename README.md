@@ -20,3 +20,20 @@ A small class that provides an easy way to save data and keep comments in Yaml f
 - Sauvegarder les commentaires présent dans le fichier Yaml.
 - Soit la même chose que bukkit mais en gardant les commentaire ;)
 
+
+## How to use
+
+Maven:
+
+```XML
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+```
+
+```XML
+            <groupId>com.github.Medialo</groupId>
+            <artifactId>PbmYaml</artifactId>
+            <version>VERSION</version>
+```
