@@ -6,7 +6,7 @@
 
     <groupId>com.github.medialo</groupId>
     <artifactId>PbmYaml</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.0b</version>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
