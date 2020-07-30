@@ -70,7 +70,7 @@ public class PbmYaml {
 
 
     public void createFileAndParents(File file){
-        createFileAndParents(file.toPath(),file.getName());
+        createFileAndParents(file.getParentFile().toPath(),file.getName());
     }
 
     public void createFileAndParents(File file, String fileName){
@@ -185,7 +185,7 @@ public class PbmYaml {
 
 
     public void set(String url,Object value){
-            this.values.replace(url,value);
+        this.values.replace(url,value);
     }
 
     //Not tested yet
@@ -251,7 +251,10 @@ public class PbmYaml {
 
     private String commentCheck(String str){
         return (!str.startsWith("#")) ? "#"+str : str;
+    }
 
+    private String urlCheck(String str){
+        return (!str.endsWith(".")) ? str+"." : str;
     }
 
 
@@ -259,8 +262,42 @@ public class PbmYaml {
         this.values = values;
     }
 
-    public void addValues(String url, Map<String, Object> values){
-        values.forEach((s, o) -> this.values.put(url+s,o));
+    public void customSerializer(PbmSerializable obj){
+        addValues("", obj.getSerializedObject());
+
     }
 
+    public void customSerializer(String url, PbmSerializable obj){
+        addValues(url,obj.getSerializedObject());
+    }
+
+    public void addValues(String url, Map<String, Object> values){
+        if (this.values == null)
+            this.values = new HashMap<>();
+        Map<String, Object> mapTemp = null;
+//        values.forEach((s, o) -> mapTemp.put(s,o));
+        String[] urls = url.split("\\.");
+        if (!url.isEmpty() ){
+            if (urls.length < 2)
+                urls[0] = url;
+            for (int i = urls.length-1; i > 0; i--) {
+                Map<String, Object> mapfor = new HashMap<>();
+                if (i == urls.length-1){
+                    mapfor.put(urls[i],values);
+                } else {
+                    mapfor.put(urls[i],mapTemp);
+                }
+                mapTemp = mapfor;
+
+            }
+            this.values.put(urls[0],values);
+        } else {
+            this.values.putAll(values);
+        }
+    }
+
+
+    public Map<String, Object> getValues() {
+        return values;
+    }
 }

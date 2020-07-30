@@ -26,6 +26,7 @@ public class YamlSerializer{
         for (Class<?> c = obj.getClass(); c != null; c = c.getSuperclass()) {
             if (aClass.contains(c) || obj.getClass().equals(c))
                 for (Field field : c.getDeclaredFields()) {
+                    field.setAccessible(true);
                     if (!Modifier.isTransient(field.getModifiers())) {
                         try {
                             map.put(field.getName(),field.get(obj));
@@ -33,6 +34,7 @@ public class YamlSerializer{
                             e.printStackTrace();
                         }
                     }
+                    field.setAccessible(false);
                 }
         }
         return map;
