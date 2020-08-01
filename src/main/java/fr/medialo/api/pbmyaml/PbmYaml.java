@@ -4,8 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -183,71 +181,80 @@ public class PbmYaml {
         }
     }
 
-
-    public void set(String url,Object value){
-        this.values.replace(url,value);
+    private Object urlToObj(String url){
+        String[] urls = url.split("\\.");
+        if( urls.length <= 1){
+            return this.values.get(url);
+        } else {
+            Map<String ,Object> tempMap = null;
+            for (int i = 0; i < urls.length-1; i++) {
+                if(tempMap == null){
+                    tempMap = (Map<String, Object>) this.values.get(urls[i]);
+                } else {
+                    tempMap = (Map<String, Object>) tempMap.get(urls[i]);
+                }
+            }
+            return tempMap.get(urls[urls.length-1]);
+        }
     }
 
-    //Not tested yet
-    public void setOrAdd(String url,Object value){
-        this.values.put(url,value);
-    }
-
+    /**
+     *  This method is not ready to be used !
+     * @param url
+     */
+    @Deprecated
     public void remove(String url){
         this.values.remove(url);
     }
 
     public boolean getBoolean(String url){
-        return this.values.get(url) != null && (boolean) this.values.get(url);
+        return urlToObj(url) != null && (boolean) urlToObj(url);
     }
 
 
     public float getFloat(String url){
-        return this.values.get(url) == null ? 0.0f : (float) this.values.get(url);
+        return  urlToObj(url) == null ? 0.0f : (float) urlToObj(url);
     }
 
     public double getDouble(String url){
-        return this.values.get(url) == null ? 0.0 : (double) this.values.get(url);
+        return  urlToObj(url) == null ? 0.0 : (double) urlToObj(url);
     }
 
 
     public char getChar(String url){
-        return this.values.get(url) == null ? '0' : (char) this.values.get(url);
+        return  urlToObj(url) == null ? '0': (char) urlToObj(url);
     }
 
     public byte getByte(String url){
-        return this.values.get(url) == null ? -1 : (byte) this.values.get(url);
+        return  urlToObj(url) == null ? 0 : (byte) urlToObj(url);
     }
 
     public short getShort(String url){
-        return this.values.get(url) == null ? 0 : (short) this.values.get(url);
+        return  urlToObj(url) == null ? 0 : (short) urlToObj(url);
     }
 
     public int getInt(String url){
-        return this.values.get(url) == null ? 0 : (int) this.values.get(url);
+        return  urlToObj(url) == null ? 0 : (int) urlToObj(url);
     }
 
     public long getLong(String url){
-        return this.values.get(url) == null ?  0 : (long) this.values.get(url);
+        return  urlToObj(url) == null ? 0 : (long) urlToObj(url);
     }
 
     public String getString(String url){
-        return this.values.get(url) == null ? null : (String) this.values.get(url);
+        return  urlToObj(url) == null ? "" : (String) urlToObj(url);
     }
 
 
     public  List<?> getList(String url){
-        return this.values.get(url) == null ? null : (List<?>) this.values.get(url);
+        return  urlToObj(url) == null ? Collections.emptyList() : (List<?>) urlToObj(url);
     }
 
-
+    @Deprecated
     public Object getObject(String url){
         return this.values.get(url);
     }
 
-    public <T> T getOrDefault(String url, T object){
-        return this.values.get(url) == null ? object : (T) this.values.get(url);
-    }
 
     private String commentCheck(String str){
         return (!str.startsWith("#")) ? "#"+str : str;
@@ -271,26 +278,53 @@ public class PbmYaml {
         addValues(url,obj.getSerializedObject());
     }
 
+
+
+    public void set(String url,Object value){
+        if (this.values == null)
+            this.values = new HashMap<>();
+        String[] urls = url.split("\\.");
+        if (!url.isEmpty() ){
+            Map<String, Object> mapTemp = null;
+            if (urls.length < 2){
+                this.values.put(url,value);
+            }
+            else {
+                for (int i = urls.length-1; i > 0; i--) {
+                    Map<String, Object> mapfor = new HashMap<>();
+                    if (i == urls.length-1){
+                        mapfor.put(urls[i],value);
+                    } else {
+                        mapfor.put(urls[i],mapTemp);
+                    }
+                    mapTemp = mapfor;
+                }
+                this.values.put(urls[0],mapTemp);
+            }
+        }
+    }
+
     public void addValues(String url, Map<String, Object> values){
         if (this.values == null)
             this.values = new HashMap<>();
-        Map<String, Object> mapTemp = null;
-//        values.forEach((s, o) -> mapTemp.put(s,o));
         String[] urls = url.split("\\.");
         if (!url.isEmpty() ){
-            if (urls.length < 2)
-                urls[0] = url;
-            for (int i = urls.length-1; i > 0; i--) {
-                Map<String, Object> mapfor = new HashMap<>();
-                if (i == urls.length-1){
-                    mapfor.put(urls[i],values);
-                } else {
-                    mapfor.put(urls[i],mapTemp);
-                }
-                mapTemp = mapfor;
-
+            Map<String, Object> mapTemp = null;
+            if (urls.length < 2){
+                this.values.put(url,values);
             }
-            this.values.put(urls[0],values);
+            else {
+                for (int i = urls.length-1; i > 0; i--) {
+                    Map<String, Object> mapfor = new HashMap<>();
+                    if (i == urls.length-1){
+                        mapfor.put(urls[i],values);
+                    } else {
+                        mapfor.put(urls[i],mapTemp);
+                    }
+                    mapTemp = mapfor;
+                }
+                this.values.put(urls[0],mapTemp);
+            }
         } else {
             this.values.putAll(values);
         }
