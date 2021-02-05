@@ -19,7 +19,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-    - run: |
+      run: |
         mvn -B package --file pom.xml
         ls -la
     - name: Publish Test Report
@@ -33,3 +33,5 @@ jobs:
 #      with:
 #        host: ${{ secrets.HOST }}
 #        key: ${{ secrets.SSH_PRIVATE_KEY }}
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
