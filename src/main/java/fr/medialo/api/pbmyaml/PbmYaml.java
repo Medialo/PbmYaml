@@ -3,7 +3,11 @@ package fr.medialo.api.pbmyaml;
 import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import java.io.*;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +21,7 @@ public class PbmYaml {
     //    private final LoaderOptions loaderOptions = new LoaderOptions();
     //    private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml;
-    private Map<String,Object> values;
+    private Map<String, Object> values;
     private File file;
     private List<String> footer;
     private List<String> header;
@@ -28,133 +32,107 @@ public class PbmYaml {
         this.yaml = new Yaml(yamlOptions);
     }
 
-    public void load(File file){
-        this.file=file;
-        try ( BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file))){
+    public void load(File file) {
+        this.file = file;
+        try (BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file))) {
             this.values = this.yaml.load(buf);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void clearFooter(){
+    public void clearFooter() {
         this.footer.clear();
     }
 
-    public void setFooter(List<String> list){
+    public void setFooter(List<String> list) {
         this.footer = list;
     }
 
-    public void addFooter(String... str){
+    public void addFooter(String... str) {
         if (this.footer == null)
             this.footer = new ArrayList<>();
         this.footer.addAll(Arrays.asList(str));
     }
 
 
-    public void clearHeader(){
+    public void clearHeader() {
         this.header.clear();
     }
 
-    public void setheader(List<String> list){
+    public void setheader(List<String> list) {
         this.header = list;
     }
 
-    public void addHeader(String... str){
+    public void addHeader(String... str) {
         if (this.header == null)
             this.header = new ArrayList<>();
         this.header.addAll(Arrays.asList(str));
     }
 
 
-    public void createFileAndParents(File file){
-        createFileAndParents(file.getParentFile().toPath(),file.getName());
+    public void createFileAndParents(File file) {
+        createFileAndParents(file.getParentFile().toPath(), file.getName());
     }
 
-    public void createFileAndParents(File file, String fileName){
-        createFileAndParents(file.toPath(),fileName);
+    public void createFileAndParents(File file, String fileName) {
+        createFileAndParents(file.toPath(), fileName);
     }
 
-    public void createFileAndParents(File getDataFolder,String parentsFolder, String fileName){
-        createFileAndParents(new File(getDataFolder,parentsFolder).toPath(),fileName);
+    public void createFileAndParents(File getDataFolder, String parentsFolder, String fileName) {
+        createFileAndParents(new File(getDataFolder, parentsFolder).toPath(), fileName);
     }
 
-    public void createFileAndParents(Path path,String fileName){
+    public void createFileAndParents(Path path, String fileName) {
         try {
-            if(!Files.exists(path))
+            if (!Files.exists(path))
                 Files.createDirectories(path);
-            if(!Files.exists(path.resolve(fileName)))
+            if (!Files.exists(path.resolve(fileName)))
                 Files.createFile(path.resolve(fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void reload(){
+    public void reload() {
         load(this.file);
     }
 
-    //Idea in progress ...
-//    public boolean validate(){
-//        FileInputStream fi = null;
-//        InputStream stream = null;
-//        try {
-//            fi = new FileInputStream(file);
-//            stream = new BufferedInputStream(fi);
-////             while (int )
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if(fi != null)
-//                    fi.close();
-//                if(stream != null)
-//                    stream.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return  true;
-//    }
-
-
-    public void save(){
+    public void save() {
         Map<String, List<String>> commentsList = new HashMap<>();
         List<String> lineToWrite = null;
         try {
             List<String> footer = new ArrayList<>();
             List<String> commentsTemp = new ArrayList<>();
             Pattern pattern = Pattern.compile("\\b.+[:]");
-            Matcher matcher ;
+            Matcher matcher;
             List<String> lines = Files.readAllLines(this.file.toPath());
             for (String line : lines) {
                 String ll = line.trim();
                 matcher = pattern.matcher(ll);
-                if (ll.startsWith("#")){
+                if (ll.startsWith("#")) {
                     commentsTemp.add(ll);
-                } else if (matcher.find() && !commentsTemp.isEmpty() ) {
-                    commentsList.put( StringUtils.chop(matcher.group(0)),new ArrayList<>(commentsTemp));
+                } else if (matcher.find() && !commentsTemp.isEmpty()) {
+                    commentsList.put(StringUtils.chop(matcher.group(0)), new ArrayList<>(commentsTemp));
                     System.out.println(commentsTemp.size());
                     commentsTemp.clear();
                 }
             }
-            if(!commentsTemp.isEmpty()){
+            if (!commentsTemp.isEmpty()) {
                 footer = commentsTemp;
-
             }
 //-------------------------------------------------------------
             lineToWrite = new ArrayList<>(Arrays.asList(yaml.dump(this.values).split("\n")));
-            for (int i = 0; i < lineToWrite.size(); i++){
+            for (int i = 0; i < lineToWrite.size(); i++) {
                 String line = lineToWrite.get(i);
                 matcher = pattern.matcher(line);
-                if(matcher.find()){
+                if (matcher.find()) {
                     String key = StringUtils.chop(matcher.group(0));
                     List<String> commentsLines = commentsList.get(key);
-                    if (commentsLines != null){
-                        lineToWrite.addAll(i,commentsLines);
+                    if (commentsLines != null) {
+                        lineToWrite.addAll(i, commentsLines);
                         commentsList.remove(key);
-                        i += commentsLines.size()-1;
+                        i += commentsLines.size() - 1;
                     }
                 }
             }
@@ -162,14 +140,12 @@ public class PbmYaml {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         if (lineToWrite != null) {
-            if(this.header != null){
+            if (this.header != null) {
                 this.header.replaceAll(this::commentCheck);
-                lineToWrite.addAll(0,this.header);
+                lineToWrite.addAll(0, this.header);
             }
-            if(this.footer != null){
+            if (this.footer != null) {
                 this.footer.replaceAll(this::commentCheck);
                 lineToWrite.addAll(this.footer);
             }
@@ -181,157 +157,149 @@ public class PbmYaml {
         }
     }
 
-    private Object urlToObj(String url){
+    private Object urlToObj(String url) {
         String[] urls = url.split("\\.");
-        if( urls.length <= 1){
+        if (urls.length <= 1) {
             return this.values.get(url);
         } else {
-            Map<String ,Object> tempMap = null;
-            for (int i = 0; i < urls.length-1; i++) {
-                if(tempMap == null){
+            Map<String, Object> tempMap = null;
+            for (int i = 0; i < urls.length - 1; i++) {
+                if (tempMap == null) {
                     tempMap = (Map<String, Object>) this.values.get(urls[i]);
                 } else {
                     tempMap = (Map<String, Object>) tempMap.get(urls[i]);
                 }
             }
-            return tempMap.get(urls[urls.length-1]);
+            return tempMap.get(urls[urls.length - 1]);
         }
     }
 
     /**
-     *  This method is not ready to be used !
+     * This method is not ready to be used !
+     *
      * @param url
      */
     @Deprecated
-    public void remove(String url){
+    public void remove(String url) {
         this.values.remove(url);
     }
 
-    public boolean getBoolean(String url){
+    public boolean getBoolean(String url) {
         return urlToObj(url) != null && (boolean) urlToObj(url);
     }
 
 
-    public float getFloat(String url){
-        return  urlToObj(url) == null ? 0.0f : (float) urlToObj(url);
+    public float getFloat(String url) {
+        return urlToObj(url) == null ? 0.0f : (float) urlToObj(url);
     }
 
-    public double getDouble(String url){
-        return  urlToObj(url) == null ? 0.0 : (double) urlToObj(url);
-    }
-
-
-    public char getChar(String url){
-        return  urlToObj(url) == null ? '0': (char) urlToObj(url);
-    }
-
-    public byte getByte(String url){
-        return  urlToObj(url) == null ? 0 : (byte) urlToObj(url);
-    }
-
-    public short getShort(String url){
-        return  urlToObj(url) == null ? 0 : (short) urlToObj(url);
-    }
-
-    public int getInt(String url){
-        return  urlToObj(url) == null ? 0 : (int) urlToObj(url);
-    }
-
-    public long getLong(String url){
-        return  urlToObj(url) == null ? 0 : (long) urlToObj(url);
-    }
-
-    public String getString(String url){
-        return  urlToObj(url) == null ? "" : (String) urlToObj(url);
+    public double getDouble(String url) {
+        return urlToObj(url) == null ? 0.0 : (double) urlToObj(url);
     }
 
 
-    public  List<?> getList(String url){
-        return  urlToObj(url) == null ? Collections.emptyList() : (List<?>) urlToObj(url);
+    public char getChar(String url) {
+        return urlToObj(url) == null ? '0' : (char) urlToObj(url);
+    }
+
+    public byte getByte(String url) {
+        return urlToObj(url) == null ? 0 : (byte) urlToObj(url);
+    }
+
+    public short getShort(String url) {
+        return urlToObj(url) == null ? 0 : (short) urlToObj(url);
+    }
+
+    public int getInt(String url) {
+        return urlToObj(url) == null ? 0 : (int) urlToObj(url);
+    }
+
+    public long getLong(String url) {
+        return urlToObj(url) == null ? 0 : (long) urlToObj(url);
+    }
+
+    public String getString(String url) {
+        return urlToObj(url) == null ? "" : (String) urlToObj(url);
+    }
+
+    public List<?> getList(String url) {
+        return urlToObj(url) == null ? Collections.emptyList() : (List<?>) urlToObj(url);
     }
 
     @Deprecated
-    public Object getObject(String url){
+    public Object getObject(String url) {
         return this.values.get(url);
     }
 
-
-    private String commentCheck(String str){
-        return (!str.startsWith("#")) ? "#"+str : str;
+    private String commentCheck(String str) {
+        return (!str.startsWith("#")) ? "#" + str : str;
     }
 
-    private String urlCheck(String str){
-        return (!str.endsWith(".")) ? str+"." : str;
+    private String urlCheck(String str) {
+        return (!str.endsWith(".")) ? str + "." : str;
     }
 
-
-    public void setValues(Map<String, Object> values) {
-        this.values = values;
-    }
-
-    public void customSerializer(PbmSerializable obj){
+    public void customSerializer(PbmSerializable obj) {
         addValues("", obj.getSerializedObject());
-
     }
 
-    public void customSerializer(String url, PbmSerializable obj){
-        addValues(url,obj.getSerializedObject());
+    public void customSerializer(String url, PbmSerializable obj) {
+        addValues(url, obj.getSerializedObject());
     }
 
-
-
-    public void set(String url,Object value){
+    public void set(String url, Object value) {
         if (this.values == null)
             this.values = new HashMap<>();
         String[] urls = url.split("\\.");
-        if (!url.isEmpty() ){
+        if (!url.isEmpty()) {
             Map<String, Object> mapTemp = null;
-            if (urls.length < 2){
-                this.values.put(url,value);
-            }
-            else {
-                for (int i = urls.length-1; i > 0; i--) {
+            if (urls.length < 2) {
+                this.values.put(url, value);
+            } else {
+                for (int i = urls.length - 1; i > 0; i--) {
                     Map<String, Object> mapfor = new HashMap<>();
-                    if (i == urls.length-1){
-                        mapfor.put(urls[i],value);
+                    if (i == urls.length - 1) {
+                        mapfor.put(urls[i], value);
                     } else {
-                        mapfor.put(urls[i],mapTemp);
+                        mapfor.put(urls[i], mapTemp);
                     }
                     mapTemp = mapfor;
                 }
-                this.values.put(urls[0],mapTemp);
+                this.values.put(urls[0], mapTemp);
             }
         }
     }
 
-    public void addValues(String url, Map<String, Object> values){
+    public void addValues(String url, Map<String, Object> values) {
         if (this.values == null)
             this.values = new HashMap<>();
         String[] urls = url.split("\\.");
-        if (!url.isEmpty() ){
+        if (!url.isEmpty()) {
             Map<String, Object> mapTemp = null;
-            if (urls.length < 2){
-                this.values.put(url,values);
-            }
-            else {
-                for (int i = urls.length-1; i > 0; i--) {
+            if (urls.length < 2) {
+                this.values.put(url, values);
+            } else {
+                for (int i = urls.length - 1; i > 0; i--) {
                     Map<String, Object> mapfor = new HashMap<>();
-                    if (i == urls.length-1){
-                        mapfor.put(urls[i],values);
+                    if (i == urls.length - 1) {
+                        mapfor.put(urls[i], values);
                     } else {
-                        mapfor.put(urls[i],mapTemp);
+                        mapfor.put(urls[i], mapTemp);
                     }
                     mapTemp = mapfor;
                 }
-                this.values.put(urls[0],mapTemp);
+                this.values.put(urls[0], mapTemp);
             }
         } else {
             this.values.putAll(values);
         }
     }
 
-
     public Map<String, Object> getValues() {
         return values;
+    }
+
+    public void setValues(Map<String, Object> values) {
+        this.values = values;
     }
 }

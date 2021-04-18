@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface PbmSerializable {
 
-    public Map<String, Object> getSerializedObject();
+    Map<String, Object> getSerializedObject();
 
 }
