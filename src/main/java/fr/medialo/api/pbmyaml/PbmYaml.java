@@ -37,6 +37,8 @@ public class PbmYaml {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(this.values == null)
+            this.values = new HashMap<>();
     }
 
     public void clearFooter() {
