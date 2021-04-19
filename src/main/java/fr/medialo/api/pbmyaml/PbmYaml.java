@@ -268,7 +268,7 @@ public class PbmYaml {
 
     public <T> T getTypeOrDefaultAndSetSave(String url, T def) {
         Object bool = urlToObj(url);
-        if (bool == null) {
+        if (bool != null) {
             set(url, def);
             save();
             return (T) bool;
