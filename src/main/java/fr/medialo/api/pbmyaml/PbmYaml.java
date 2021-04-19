@@ -18,8 +18,6 @@ import java.util.regex.Pattern;
 public class PbmYaml {
 
     private final DumperOptions yamlOptions = new DumperOptions();
-    //    private final LoaderOptions loaderOptions = new LoaderOptions();
-    //    private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml;
     private Map<String, Object> values;
     private File file;
@@ -176,8 +174,6 @@ public class PbmYaml {
 
     /**
      * This method is not ready to be used !
-     *
-     * @param url
      */
     @Deprecated
     public void remove(String url) {
@@ -187,7 +183,6 @@ public class PbmYaml {
     public boolean getBoolean(String url) {
         return urlToObj(url) != null && (boolean) urlToObj(url);
     }
-
 
     public float getFloat(String url) {
         return urlToObj(url) == null ? 0.0f : (float) urlToObj(url);
@@ -224,6 +219,62 @@ public class PbmYaml {
 
     public List<?> getList(String url) {
         return urlToObj(url) == null ? Collections.emptyList() : (List<?>) urlToObj(url);
+    }
+
+    public <T> T getTypeOrDefault(String url, T def) {
+        return urlToObj(url) == null ? def : (T) urlToObj(url);
+    }
+
+    public boolean getBooleanOrDefault(String url, boolean def) {
+        return urlToObj(url) == null ? def : (boolean) urlToObj(url);
+    }
+
+    public float getFloatOrDefault(String url, float def) {
+        return urlToObj(url) == null ? def : (float) urlToObj(url);
+    }
+
+    public double getDoublerDefault(String url, double def) {
+        return urlToObj(url) == null ? def : (double) urlToObj(url);
+    }
+
+    public char getCharOrDefault(String url, char def) {
+        return urlToObj(url) == null ? def : (char) urlToObj(url);
+    }
+
+    public byte getByteOrDefault(String url, byte def) {
+        return urlToObj(url) == null ? def : (byte) urlToObj(url);
+    }
+
+    public short getShortOrDefault(String url, short def) {
+        return urlToObj(url) == null ? def : (short) urlToObj(url);
+    }
+
+    public int getIntOrDefault(String url, int def) {
+        return urlToObj(url) == null ? def : (int) urlToObj(url);
+    }
+
+    public long getLongOrDefault(String url, long def) {
+        return urlToObj(url) == null ? def : (long) urlToObj(url);
+    }
+
+    public String getStringOrDefault(String url, String def) {
+        return urlToObj(url) == null ? def : (String) urlToObj(url);
+    }
+
+    public List<?> getListOrDefault(String url, List<?> def) {
+        return urlToObj(url) == null ? def : (List<?>) urlToObj(url);
+    }
+
+
+    public <T> T getTypeOrDefaultAndSetSave(String url, T def) {
+        Object bool = urlToObj(url);
+        if (bool == null) {
+            set(url, def);
+            save();
+            return (T) bool;
+        } else {
+            return def;
+        }
     }
 
     @Deprecated
