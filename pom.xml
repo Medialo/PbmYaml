@@ -3,22 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.github.medialo</groupId>
     <artifactId>PbmYaml</artifactId>
     <version>0.1.0b</version>
-
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
-
-
-
     <repositories>
 
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -32,5 +26,17 @@
             <version>2.6</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <artifactId>lombok</artifactId>-->
+<!--            <groupId>org.projectlombok</groupId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <version>1.18.10</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

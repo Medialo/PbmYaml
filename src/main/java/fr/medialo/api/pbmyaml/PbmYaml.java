@@ -28,6 +28,7 @@ public class PbmYaml {
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlOptions.setPrettyFlow(true);
         this.yaml = new Yaml(yamlOptions);
+
     }
 
     public void load(File file) {
@@ -37,8 +38,8 @@ public class PbmYaml {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(this.values == null)
-            this.values = new HashMap<>();
+//        if(this.values == null)
+//            this.values = new HashMap<>();
     }
 
     public void clearFooter() {
@@ -159,6 +160,8 @@ public class PbmYaml {
 
     private Object urlToObj(String url) {
         String[] urls = url.split("\\.");
+        if(this.values == null || this.values.size() == 0)
+            return null;
         if (urls.length <= 1) {
             return this.values.get(url);
         } else {
@@ -308,6 +311,29 @@ public class PbmYaml {
             Map<String, Object> mapTemp = null;
             if (urls.length < 2) {
                 this.values.put(url, value);
+            } else {
+                for (int i = urls.length - 1; i > 0; i--) {
+                    Map<String, Object> mapfor = new HashMap<>();
+                    if (i == urls.length - 1) {
+                        mapfor.put(urls[i], value);
+                    } else {
+                        mapfor.put(urls[i], mapTemp);
+                    }
+                    mapTemp = mapfor;
+                }
+                this.values.put(urls[0], mapTemp);
+            }
+        }
+    }
+
+    public void add(String url, Object value) {
+        if (this.values == null)
+            this.values = new HashMap<>();
+        String[] urls = url.split("\\.");
+        if (!url.isEmpty()) {
+            Map<String, Object> mapTemp = null;
+            if (urls.length < 2) {
+                this.values.putIfAbsent(url, value);
             } else {
                 for (int i = urls.length - 1; i > 0; i--) {
                     Map<String, Object> mapfor = new HashMap<>();
