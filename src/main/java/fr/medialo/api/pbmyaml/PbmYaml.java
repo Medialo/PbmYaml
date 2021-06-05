@@ -15,6 +15,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @Deprecated
+ */
+@Deprecated
 public class PbmYaml {
 
     private final DumperOptions yamlOptions = new DumperOptions();
@@ -160,7 +164,7 @@ public class PbmYaml {
 
     private Object urlToObj(String url) {
         String[] urls = url.split("\\.");
-        if(this.values == null || this.values.size() == 0)
+        if (this.values == null || this.values.size() == 0)
             return null;
         if (urls.length <= 1) {
             return this.values.get(url);
