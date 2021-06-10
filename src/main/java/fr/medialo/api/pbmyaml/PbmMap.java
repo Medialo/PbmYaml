@@ -24,7 +24,7 @@ public class PbmMap implements DataInteraction {
             Object o = map.get(str);
             if (o == null && !st.hasMoreTokens()) {
                 map.put(str, val);
-            } else if (o == null || o instanceof Map && st.hasMoreTokens()) {
+            } else if (o == null || o instanceof Map && ((Map<?, ?>) o).isEmpty() && st.hasMoreTokens()  ) {
                 Map<String, Object> newMap = new HashMap<>();
                 map.put(str, newMap);
                 set(st, val, newMap);
@@ -113,21 +113,7 @@ public class PbmMap implements DataInteraction {
         }
     }
 
-    private void remove(StringTokenizer st, Map<String, Object> map) {
-        if (st.hasMoreTokens()) {
-            String str = st.nextToken();
-            Object o = map.get(str);
-            if (o != null) {
-                if (o instanceof Map) { //st.hasMoreTokens() &&
-                    remove(st, (Map<String, Object>) o);
-                } else if (!st.hasMoreTokens()) {
-                    map.remove(str);
-                    if (map.size() == 0) {
-                        map = null;
-                    }
-                }
-            }
-        }
+    public Map<String, Object> getData() {
+        return data;
     }
-
 }
