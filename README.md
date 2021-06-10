@@ -19,35 +19,10 @@ A small class that provides an easy way to save data and keep comments in Yaml f
 - Obtenir des valeurs depuis un fichier Yaml.
 - Changer ces valeurs.
 - Enregistrer ces valeurs sur le dique au format Yaml.
-- Sauvegarder les commentaires présent dans le fichier Yaml.
-- Soit la même chose que bukkit mais en gardant les commentaire ;)
+- Sauvegarder les commentaires présents dans le fichier Yaml.
+- Soit la même chose que bukkit mais en gardant les commentaires ;)
 
 
 ## How to use
+[Teleport me to the wiki!](https://github.com/Medialo/PbmYaml/wiki "Wiki is cool, cookies too")
 
-Maven:
-
-```XML
-<repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-</repository>
-```
-
-```XML
-<dependency>
-        <groupId>com.github.Medialo</groupId>
-        <artifactId>PbmYaml</artifactId>
-        <version>VERSION</version>
-</dependency>
-```
-
-## Example 
-
-```JAVA
-        File filetest = new File(this.getDataFolder(),"test.yml");
-        PbmYaml fileConfiguration = new PbmYaml();
-        fileConfiguration.load(filetest);
-        fileConfiguration.set("parameter.value",false);
-        fileConfiguration.save();
-```  
