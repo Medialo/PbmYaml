@@ -13,17 +13,19 @@ import java.util.regex.Pattern;
 
 public class PbmYaml extends DataFile {
 
-    private final DumperOptions yamlOptions = new DumperOptions();
+    private static final transient String EXTENSION = "yml";
     private final Yaml yaml;
 
     public PbmYaml() {
+        DumperOptions yamlOptions = new DumperOptions();
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlOptions.setPrettyFlow(true);
         this.yaml = new Yaml(yamlOptions);
     }
 
     @Override
-    public void load(final Path path) {
+    public final void load(final Path path) {
+        load0(path);
         try {
             this.data = new PbmMap(yaml.load(Files.newBufferedReader(path)));
             this.path = path;
@@ -33,7 +35,7 @@ public class PbmYaml extends DataFile {
     }
 
     @Override
-    public void save(final KeepComments keepComments) {
+    public final void save(final KeepComments keepComments) {
         try {
             if (KeepComments.YES.equals(keepComments)) {
                 final Pattern pattern = Pattern.compile("^[^:\\n]*:");
@@ -68,5 +70,10 @@ public class PbmYaml extends DataFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getExtension() {
+        return PbmYaml.EXTENSION;
     }
 }

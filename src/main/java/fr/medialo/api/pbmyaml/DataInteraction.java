@@ -1,5 +1,6 @@
 package fr.medialo.api.pbmyaml;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -8,6 +9,10 @@ import java.util.Objects;
 public interface DataInteraction {
 
     void set(final String key, final Object val);
+
+    default void set(final String key, final Object... val) {
+        set(key, Arrays.asList(val));
+    }
 
     default void setIfNotExist(final String key, final Object def) {
         if (!contain(key))
@@ -72,7 +77,7 @@ public interface DataInteraction {
         return Objects.nonNull(get(key));
     }
 
-    default boolean containsKey(final String key){
+    default boolean containsKey(final String key) {
         return get(key) != null;
     }
 

@@ -1,8 +1,10 @@
 package fr.medialo.api.pbmyaml;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class DataFile implements IDataFile, DataInteraction{
+public abstract class DataFile implements IDataFile, DataInteraction {
 
     protected PbmMap data;
     protected Path path;
@@ -25,5 +27,29 @@ public abstract class DataFile implements IDataFile, DataInteraction{
     @Override
     public void remove(String key) {
         this.data.remove(key);
+    }
+
+    @Override
+    public void load(Path path) {
+
+    }
+
+    @Override
+    public void save(KeepComments keepComments) {
+
+    }
+
+    @Override
+    public String getExtension() {
+        return null;
+    }
+
+    @Override
+    public void delete() {
+        try {
+            Files.deleteIfExists(this.path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
