@@ -45,6 +45,10 @@ public interface DataInteraction {
         return get(key, "null");
     }
 
+    default char getChar(final String key) {
+        return get(key, '\u0000');
+    }
+
     default byte getByte(final String key) {
         return get(key, (byte) 0);
     }

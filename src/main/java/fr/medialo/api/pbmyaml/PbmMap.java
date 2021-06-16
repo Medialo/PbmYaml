@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 public class PbmMap implements DataInteraction {
-
     private final Map<String, Object> data;
-
 
     public PbmMap() {
         this.data = new LinkedHashMap<>();
@@ -24,6 +22,7 @@ public class PbmMap implements DataInteraction {
         set(st, val, this.data);
     }
 
+    //todo optimize this ugly things
     private void set(StringTokenizer st, Object val, Map<String, Object> map) {
         if (st.hasMoreTokens()) {
             String str = st.nextToken();
@@ -38,6 +37,10 @@ public class PbmMap implements DataInteraction {
                 map.put(str, val);
             } else if (o instanceof Map) {
                 set(st, val, (Map<String, Object>) map.get(str));
+            } else if (o instanceof String && st.hasMoreTokens()) {
+                Map<String, Object> newMap = new HashMap<>();
+                map.put(str, newMap);
+                set(st, val, newMap);
             } else {
                 map.put(str, val);
             }
@@ -84,8 +87,6 @@ public class PbmMap implements DataInteraction {
 
     @Override
     public synchronized void remove(String key) {
-//        StringTokenizer st = new StringTokenizer(key, ".");
-//        remove(st, this.data);
         if (!containsKey(key))
             return;
         String[] strs = key.split("\\.");

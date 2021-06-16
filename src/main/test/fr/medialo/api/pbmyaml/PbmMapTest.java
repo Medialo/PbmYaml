@@ -1,162 +1,89 @@
 package fr.medialo.api.pbmyaml;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
+import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) //todo ?
 class PbmMapTest {
 
-    @AfterAll
-    @Test
-    public static void setUp(){
+    private final String stringValue = "pbmYaml";
+    private final String stringValue2 = "anotherWord";
+    private final char charValue = 'p';
+    private final int intValue = 86764;
+    private final double doubleValue = 45757.546587;
+    private PbmMap pbmMap;
 
+    @BeforeAll
+    @Test
+    public void setUp() {
+        Map<String, Object> map1 = new HashMap<>();
+        Map<String, Object> map2 = new HashMap<>();
+        Map<String, Object> map3 = new HashMap<>();
+        Map<String, String> map4 = new HashMap<>();
+        map4.put("text", "bravo");
+        map3.put("plugin", map4);
+        map2.put("test", map3);
+        map1.put("message", map2);
+        pbmMap = new PbmMap(map1);
     }
 
     @Test
+    @Order(2)
     void set() {
+        pbmMap.set("test.set.1", stringValue);
+        Assertions.assertEquals(stringValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("1"));
+        pbmMap.set("test.set.1", stringValue2);
+        Assertions.assertEquals(stringValue2, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("1"));
+        pbmMap.set("test.set.2", intValue);
+        Assertions.assertEquals(intValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("2"));
+        pbmMap.set("test.set.3", doubleValue);
+        Assertions.assertEquals(doubleValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("3"));
+        pbmMap.set("test.set.4", stringValue);
+        Assertions.assertEquals(stringValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("4"));
+        pbmMap.set("test.set.4.test", stringValue);
+        Assertions.assertEquals(stringValue, ((Map<String, Map<?, Map<?, ?>>>) pbmMap.getData().get("test")).get("set").get("4").get("test"));
+        pbmMap.set("test.set.4", stringValue);
+        Assertions.assertEquals(stringValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("4"));
+        pbmMap.set("test.set.5", charValue);
+        Assertions.assertEquals(charValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("5"));
     }
 
     @Test
+    @Order(3)
     void get() {
+        System.out.println(pbmMap.getData());
+        Assertions.assertNotEquals(stringValue, pbmMap.getString("test.set.1"));
+        Assertions.assertEquals(stringValue2, pbmMap.getString("test.set.1"));
+        Assertions.assertEquals(intValue, pbmMap.getInt("test.set.2"));
+        Assertions.assertEquals(doubleValue, pbmMap.getDouble("test.set.3"));
+
     }
 
     @Test
-    void getInnerTest() {
-        Map<String, Object> map1 = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
-        Map<String, Object> map3 = new HashMap<>();
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("text","bravo");
-        map3.put("plugin",map4);
-        map2.put("test",map3);
-        map1.put("message",map2);
-        PbmMap pbmMap = new PbmMap(map1);
-        System.out.println(pbmMap.get("message.test.plugin.text"));
+    @Order(1)
+    void defaultValue() {
+        final String key = "doesn'tExist";
+        assertNull(pbmMap.get(key));
+        Assertions.assertEquals("null", pbmMap.getString(key));
+        Assertions.assertEquals(0, pbmMap.getByte(key));
+        Assertions.assertEquals(0.0, pbmMap.getDouble(key));
+        Assertions.assertEquals(0, pbmMap.getInt(key));
+        Assertions.assertEquals(0, pbmMap.getShort(key));
+        Assertions.assertEquals(0, pbmMap.getLong(key));
+        Assertions.assertEquals(0.0, pbmMap.getFloat(key));
+        Assertions.assertEquals('\u0000', pbmMap.getChar(key));
     }
 
     @Test
+    @Order(4)
     void remove() {
-        Map<String, Object> map1 = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
-        Map<String, Object> map3 = new HashMap<>();
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("text","bravo");
-        map4.put("text2","bravo2");
-        map3.put("plugin",map4);
-        map2.put("test",map3);
-        map1.put("message",map2);
-        PbmMap pbmMap = new PbmMap(map1);
         pbmMap.remove("message.test.plugin.text");
-        assertNull(map4.get("text"));
-        assertEquals(map4.get("text2"),"bravo2");
-        pbmMap.remove("message.test.plugin.text2");
-        assertTrue(((Map<String, String>) map3.get("plugin")).isEmpty());
-    }
-
-    @Test
-    void remove2() {
-        Map<String, Object> map1 = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
-        Map<String, Object> map3 = new HashMap<>();
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("text","bravo");
-        map3.put("plugin",map4);
-        map2.put("test",map3);
-        map1.put("message",map2);
-        PbmMap pbmMap = new PbmMap(map1);
-        pbmMap.remove("message.test.plugin");
-        assertTrue(((Map<String, String>) map2.get("test")).isEmpty());
-    }
-
-    @Test
-    void removeNotExist() {
-        Map<String, Object> map1 = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
-        Map<String, Object> map3 = new HashMap<>();
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("text","bravo");
-        map3.put("plugin",map4);
-        map2.put("test",map3);
-        map1.put("message",map2);
-        PbmMap pbmMap = new PbmMap(map1);
-        System.out.println(map1);
-        pbmMap.remove("message.test.a.b.c.d.e.f");
-        pbmMap.remove("message.test.plugin.text");
-        System.out.println(map1);
-        pbmMap.set("message.test.plugin","Bonjour");
-        System.out.println("->" + map1);
-        pbmMap.remove("message.test.plugin");
-        System.out.println(map1);
-    }
-
-    @Test
-    void set1() {
-        Map<String, Object> map1 = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
-        Map<String, Object> map3 = new HashMap<>();
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("text","bravo");
-        map3.put("plugin",map4);
-        map2.put("test",map3);
-        map1.put("message",map2);
-        PbmMap pbmMap = new PbmMap(map1);
-        System.out.println(map1);
-        pbmMap.set("message.test.a.b.c.d.e.f.g","salut");
-        System.out.println(map1);
-        pbmMap.set("message.test.plugin.text.text3","bravo222");
-        System.out.println(map1);
-
-
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Yaml yaml = new Yaml(options);
-        String output = yaml.dump(map1);
-        System.out.println(output);
-
-
-        pbmMap.remove("message.test.plugin.text");
-//        pbmMap.set("message.test.plugin.text","bravo222");
-
-
-        System.out.println(">" + map1);
-//        assertEquals("salut",pbmMap.getString("message.test.a.b.c.d.e.f.g"));
-        pbmMap.remove("message.test.a.b.c.d.e.f.g");
-        System.out.println(map1);
-        pbmMap.set("je.suis.paul.est.mon.nom.est","paul");
-        System.out.println(map1);
-        pbmMap.set("je.suis.paul.est.mon.nom.est.et.voila","132");
-        long l1 = System.nanoTime();
-        pbmMap.set("a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p","132");
-        pbmMap.set("a.b.c.d.e.f.g.h.i.j.k.l.m.n","456");
-        pbmMap.set("a.b.c.d.e.f.g.h.i.j.k.l.m.n.a","456");
-        long l2 = System.nanoTime();
-        System.out.println(l2 - l1);
-        System.out.println(l2);
-        System.out.println(l1);
-        System.out.println(map1);
-
-
-
-//
-//
-//
-//        Object obj = yaml.load("message:\n" +
-//                "  test:\n" +
-//                "    a:\n" +
-//                "      b:\n" +
-//                "        c:\n" +
-//                "          d:\n" +
-//                "            e:\n" +
-//                "              f:\n" +
-//                "                g: salut\n" +
-//                "    plugin: ");
-//        System.out.println(obj);
+        assertNull(pbmMap.get("message.test.plugin.text"));
 
 
     }
