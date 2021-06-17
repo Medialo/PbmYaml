@@ -58,7 +58,6 @@ class PbmMapTest {
     @Order(3)
     @DisplayName("Test get method")
     void get() {
-        System.out.println(pbmMap.getData());
         Assertions.assertNotEquals(stringValue, pbmMap.getString("test.set.1"));
         Assertions.assertEquals(stringValue2, pbmMap.getString("test.set.1"));
         Assertions.assertEquals(intValue, pbmMap.getInt("test.set.2"));
