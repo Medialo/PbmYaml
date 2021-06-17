@@ -34,6 +34,7 @@ class PbmMapTest {
 
     @Test
     @Order(2)
+    @DisplayName("Test set method")
     void set() {
         pbmMap.set("test.set.1", stringValue);
         Assertions.assertEquals(stringValue, ((Map<String, Map<?, ?>>) pbmMap.getData().get("test")).get("set").get("1"));
@@ -55,6 +56,7 @@ class PbmMapTest {
 
     @Test
     @Order(3)
+    @DisplayName("Test get method")
     void get() {
         System.out.println(pbmMap.getData());
         Assertions.assertNotEquals(stringValue, pbmMap.getString("test.set.1"));
@@ -66,6 +68,7 @@ class PbmMapTest {
 
     @Test
     @Order(1)
+    @DisplayName("Test the default value return")
     void defaultValue() {
         final String key = "doesn'tExist";
         assertNull(pbmMap.get(key));
@@ -81,11 +84,10 @@ class PbmMapTest {
 
     @Test
     @Order(4)
+    @DisplayName("Test remove method")
     void remove() {
         pbmMap.remove("message.test.plugin.text");
         assertNull(pbmMap.get("message.test.plugin.text"));
-
-
     }
 
 
