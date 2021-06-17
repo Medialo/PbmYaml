@@ -10,9 +10,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
     </properties>
-
+ <build>
+     <testSourceDirectory>${basedir}/src/main/test/</testSourceDirectory>
+ </build>
     <repositories>
 
     </repositories>
