@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+@SuppressWarnings("unchecked")
 public class PbmMap implements DataInteraction {
     private final Map<String, Object> data;
 
@@ -110,7 +111,7 @@ public class PbmMap implements DataInteraction {
                 map.remove(strs[i]);
                 System.out.println(toDelete);
                 if (map.size() == 0 && toDelete != -1) {
-                    Map tempMap = (Map) get(strs, toDelete - 2);
+                    Map<?,?> tempMap = (Map<?,?>) get(strs, toDelete - 2);
                     if (tempMap != null && toDelete > 1)
                         tempMap.remove(strs[toDelete - 1]);
                     else
