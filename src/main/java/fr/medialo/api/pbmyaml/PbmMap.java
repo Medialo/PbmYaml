@@ -23,25 +23,18 @@ public class PbmMap implements DataInteraction {
         set(st, val, this.data);
     }
 
-    //todo optimize this ugly things
     private void set(StringTokenizer st, Object val, Map<String, Object> map) {
         if (st.hasMoreTokens()) {
             String str = st.nextToken();
-            Object o = map.get(str);
-            if (o == null && !st.hasMoreTokens()) {
+            Object o = map.get(str); // o = object store at key location, key is not necessary equal to full key due to StringTokenizer
+            if (!st.hasMoreTokens() && (o == null || o instanceof Map)) {
                 map.put(str, val);
-            } else if (o == null || o instanceof Map && ((Map<?, ?>) o).isEmpty() && st.hasMoreTokens()) {
+            } else if (o == null || o instanceof Map && ((Map<?, ?>) o).isEmpty() && st.hasMoreTokens() || o instanceof String && st.hasMoreTokens()) {
                 Map<String, Object> newMap = new HashMap<>();
                 map.put(str, newMap);
                 set(st, val, newMap);
-            } else if (o instanceof Map && !st.hasMoreTokens()) {
-                map.put(str, val);
-            } else if (o instanceof Map) {
+            } else if (o instanceof Map && st.hasMoreTokens()) {
                 set(st, val, (Map<String, Object>) map.get(str));
-            } else if (o instanceof String && st.hasMoreTokens()) {
-                Map<String, Object> newMap = new HashMap<>();
-                map.put(str, newMap);
-                set(st, val, newMap);
             } else {
                 map.put(str, val);
             }

@@ -33,6 +33,22 @@ class PbmMapTest {
     }
 
     @Test
+    @Order(1)
+    @DisplayName("Test the default value return")
+    void defaultValue() {
+        final String key = "doesn'tExist";
+        assertNull(pbmMap.get(key));
+        Assertions.assertEquals("null", pbmMap.getString(key));
+        Assertions.assertEquals(0, pbmMap.getByte(key));
+        Assertions.assertEquals(0.0, pbmMap.getDouble(key));
+        Assertions.assertEquals(0, pbmMap.getInt(key));
+        Assertions.assertEquals(0, pbmMap.getShort(key));
+        Assertions.assertEquals(0, pbmMap.getLong(key));
+        Assertions.assertEquals(0.0, pbmMap.getFloat(key));
+        Assertions.assertEquals('\u0000', pbmMap.getChar(key));
+    }
+
+    @Test
     @Order(2)
     @DisplayName("Test set method")
     void set() {
@@ -63,22 +79,6 @@ class PbmMapTest {
         Assertions.assertEquals(intValue, pbmMap.getInt("test.set.2"));
         Assertions.assertEquals(doubleValue, pbmMap.getDouble("test.set.3"));
 
-    }
-
-    @Test
-    @Order(1)
-    @DisplayName("Test the default value return")
-    void defaultValue() {
-        final String key = "doesn'tExist";
-        assertNull(pbmMap.get(key));
-        Assertions.assertEquals("null", pbmMap.getString(key));
-        Assertions.assertEquals(0, pbmMap.getByte(key));
-        Assertions.assertEquals(0.0, pbmMap.getDouble(key));
-        Assertions.assertEquals(0, pbmMap.getInt(key));
-        Assertions.assertEquals(0, pbmMap.getShort(key));
-        Assertions.assertEquals(0, pbmMap.getLong(key));
-        Assertions.assertEquals(0.0, pbmMap.getFloat(key));
-        Assertions.assertEquals('\u0000', pbmMap.getChar(key));
     }
 
     @Test
