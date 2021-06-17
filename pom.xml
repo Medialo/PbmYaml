@@ -10,7 +10,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <myTestSourceDirectory>${project.basedir}/src/main/test/fr/medialo/api/pbmyaml</myTestSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
     </properties>
 
     <repositories>
