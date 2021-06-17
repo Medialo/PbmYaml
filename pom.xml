@@ -11,13 +11,30 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
- <build>
-     <testSourceDirectory>${basedir}/src/main/test/</testSourceDirectory>
- </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+<!--                    <includes>-->
+<!--                        <include>Sample.java</include>-->
+<!--                    </includes>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <repositories>
 
     </repositories>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version>
+            <type>maven-plugin</type>
+        </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
